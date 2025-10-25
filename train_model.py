@@ -96,9 +96,6 @@ def train_graphsage(config,params,skills_graph,supervision_edges,supervision_bin
             total_loss += loss.item()
           
         
-            if i%200==0:
-            
-            
         scheduler.step()
         total_loss /= (n_batches*1.0)
         mlflow.log_metric(key='train_loss',value=total_loss,step=epoch+1)
