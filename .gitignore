@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# MLflow
+mlruns/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model artifacts
+*.pth
+*.pt
+*.h5
+*.pkl
+*.kv
+
+# Data files
+*.csv
+*.json
+*.txt
+*.log
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# Environment and config files
+.env
+.env.*
+config.json
+config.yaml
+secrets.json
+credentials*

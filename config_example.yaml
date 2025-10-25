@@ -1,0 +1,47 @@
+# Example configuration file for Graph Neural Network training
+
+# Model configuration
+model_name: "GraphSAGE"  # Options: GraphSAGE, GraphSAGE Directed, GAT, DEAL, attri2vec
+
+# Data paths
+data-path:
+  processed: "data/processed/"  # Path to processed data files
+
+# Training parameters
+batch_size: 512
+n_channels: 3  # Number of GNN layers
+hidden_dim: 256
+output_dim: 64
+shuffle: true
+
+# Optimizer configuration
+opt: "adam"  # Options: adam, sgd, rmsprop, adagrad
+lr: 0.001
+decay: 0.0001
+opt_scheduler: "step"  # Options: none, step, cos
+opt_restart: 20
+step_size: 5
+
+# Model-specific parameters
+num_neighbors: 10
+dropout: 0.5
+drop: true
+heads: 8  # For GAT model
+
+# DEAL-specific parameters
+theta_str: 1.0
+theta_attr: 1.0
+theta_align: 1.0
+gamma: 2.0
+b: 0.1
+scheduler: "on"  # on/off
+
+# Evaluation parameters
+lambda_attr: 0.5
+lambda_attr_str: 0.5
+top_n: 100
+
+# MLflow configuration
+mlflow:
+  tracking_uri: "file:./mlruns"
+  experiment_name: "graph-neural-networks"
