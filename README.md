@@ -18,39 +18,67 @@ export TEST_SKILLS_CONFIG=path-to-config.json  # Optional: test skills configura
 
 ```
 src/
+├── main.py                  # Main entry point for training/evaluation
 ├── models/
 │   ├── graphsage.py         # GraphSAGE model implementation
 │   ├── graphsage_in_out.py  # Bidirectional GraphSAGE
 │   ├── deal.py              # DEAL model implementation
 │   └── attri2vec.py         # Attri2Vec model implementation
-├── train_model.py           # Training script for GraphSAGE
-├── train_graphsage.py       # Training script for bidirectional GraphSAGE  
+├── train_model.py           # Training functions for GraphSAGE/DEAL
+├── train_graphsage.py       # Training function for standard GraphSAGE  
 ├── test_model.py            # Model evaluation functions
 ├── graph.py                 # Graph utility class
-└── utils/
-    └── sbert_embed_demo.py  # Sentence embedding utilities
+├── utils/
+│   └── sbert_embed_demo.py  # Sentence embedding utilities
+├── data/
+│   └── processed/           # Directory for processed data files
+├── config_example.yaml      # Example configuration file
+├── requirements.txt         # Python dependencies
+└── README.md               # This file
 ```
+
+## Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd graph-neural-networks/src
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+## Quick Start
+
+1. **Prepare your data** in the format expected by the models (see Data Files section)
+2. **Copy and modify** `config_example.yaml` to create your configuration:
+   ```bash
+   cp config_example.yaml config.yaml
+   # Edit config.yaml with your parameters
+   ```
+3. **Set environment variables** if using S3:
+   ```bash
+   export S3_BUCKET_NAME=your-bucket
+   export AWS_REGION=us-east-1
+   ```
+4. **Run training**:
+   ```bash
+   python main.py --mode train --config config.yaml
+   ```
+5. **View results** in MLflow UI:
+   ```bash
+   mlflow ui
+   ```
 
 ## Requirements
 
-- PyTorch
-- PyTorch Geometric (torch_geometric)
-- PyTorch Scatter (torch_scatter)
-- PyTorch Sparse (torch_sparse)
-- NetworkX
-- Node2Vec
-- Gensim
-- MLflow
-- NumPy
-- Pandas
-- scikit-learn
-- boto3 (for S3 operations)
-- sentence-transformers (for utils/sbert_embed_demo.py)
-- NLTK
-- stellargraph (for Attri2Vec)
-- tensorflow/keras (for Attri2Vec)
-- torchviz
-- torchsummary
+Key dependencies include:
+- PyTorch and PyTorch Geometric ecosystem
+- MLflow for experiment tracking
+- NetworkX and Node2Vec for graph operations
+- TensorFlow/Keras and stellargraph (for Attri2Vec)
+- boto3 for AWS S3 support
+- See `requirements.txt` for complete list
 
 ## Training
 
@@ -74,11 +102,27 @@ python main.py --mode prepare --config config.yaml
 
 ### Supported Models
 
+Model selection is controlled by the `model_name` parameter in your configuration file:
+
 - **GraphSAGE**: Standard GraphSAGE implementation
-- **GraphSAGE Directed**: GraphSAGE for directed graphs  
+  - Set `model_name: "GraphSAGE"`
+  - Uses `train_graphsage()` from `train_model.py`
+  
+- **GraphSAGE Directed**: GraphSAGE for directed graphs
+  - Set `model_name: "GraphSAGE Directed"`
+  - Uses directed graph data files
+  
 - **GAT**: Graph Attention Networks
+  - Set `model_name: "GAT"`
+  - Uses same training function as GraphSAGE
+  
 - **DEAL**: Dual Embedding Alignment model
+  - Set `model_name: "DEAL"`
+  - Uses `train_deal()` from `train_model.py`
+  
 - **attri2vec**: Attributed network embedding
+  - Set `model_name: "attri2vec"`
+  - Uses TensorFlow/Keras backend
 
 ### Configuration File
 
@@ -120,10 +164,17 @@ Create a YAML configuration file (see `config_example.yaml`) with the following 
 
 ## Evaluation
 
-The `test_model.py` module provides evaluation functions for all models:
-- `test_graphsage()`: Evaluate GraphSAGE model
-- `test_graphsage_in_out()`: Evaluate bidirectional GraphSAGE
-- `test_deal()`: Evaluate DEAL model
+Run evaluation with:
+```bash
+python main.py --mode evaluate --config config.yaml
+```
+
+The evaluation mode automatically selects the appropriate test function based on `model_name`:
+- **GraphSAGE/GAT**: Uses `test_graphsage()`
+- **Models with "in out"**: Uses `test_graphsage_in_out()` for bidirectional evaluation
+- **DEAL**: Uses `test_deal()`
+
+Note: The `--run-id` parameter is optional for evaluation mode.
 
 ## MLflow Integration
 
